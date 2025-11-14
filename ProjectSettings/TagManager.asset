@@ -4,21 +4,12 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Armored Warrior
-  - Warrior
   - Fire Skeleton
   - Ice Skeleton
   - Book1
   - Book2
   - Sword
-  - Fire Crystal
-  - Ice Crystal
-  - FC2
-  - FC3
-  - FC4
-  - IC2
-  - IC3
-  - IC4
+  - Normal Skeleton
   layers:
   - Default
   - TransparentFX
