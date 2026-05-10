@@ -2,7 +2,7 @@
 
 So this is Codequest - my prototype action game where you run around a castle with a sword that can activate fire and ice stuff. It's basically the final non-VR version before I integrate with VR.
 
-## 🎮 What This Actually Is
+## What This Actually Is
 
 Codequest is an action-adventure game where you explore castle areas, fight enemies, and use this ugly code interface (srry never got to redesign them) to upgrade your sword with elemental powers. You drag code elements into slots to change how your weapon works, and there are three magic books that do different things.
 
@@ -10,14 +10,14 @@ This is my prototype version - basically the last non-VR build before I move eve
 
 Run this link to play on web:
 
-## 🎯 What You're Supposed to Do
+## What You're Supposed to Do
 
 - **Run Around the Castle**: Find the entrance and explore different areas
 - **Fight Skeleton(s)**: Learn how to use your sword and elemental attacks
 - **Mess with the Code System**: Hit Tab to open the interface and drag elements around
 - **Figure Out the Books**: Each book does different stuff, experiment with them
 
-## 🎮 Controls
+## Controls
 
 ### Movement
 - **W** - Move Forward
@@ -33,7 +33,7 @@ Run this link to play on web:
 - **E** - AOE attack (fire element)
 - **C/V** - Toggle elements (debug/testing)
 
-## 📚 The Magic Books Thing
+## The Magic Books Thing
 
 There are three books and they do different stuff when you drag them into the upgrade slot:
 
@@ -41,14 +41,14 @@ There are three books and they do different stuff when you drag them into the up
 - **Book 2** - Automatically switches elements based on what enemies you're fighting  
 - **Book 3** - Lets you combine numbers with elements for special attacks (right-click)
 
-## 🏰 Getting Around the Castle
+## Getting Around the Castle
 
 - Start at the castle entrance and look for teleporters
 - There are multiple areas - castle interior and outskirts
 - Teleporters connect different parts of the map
 - Just walk into the glowing things to move between areas (dont go to the testing area tho (purple teleporter), legit cannot go back, usually i just restart the game)
 
-## 💻 The Code System
+## The Code System
 
 Hit Tab to open the interface where you:
 - Drag fire/ice elements into slots to change your sword
@@ -56,11 +56,11 @@ Hit Tab to open the interface where you:
 - Combine different elements for various effects
 - Basically just experiment until something cool happens
 
-## 🔊 Sound Stuff
+## Sound Stuff
 
 No music in this prototype version. Just the core gameplay.
 
-## 🎯 Basic Tips
+## Basic Tips
 
 1. Start by running around the castle entrance
 2. Practice with WASD movement and mouse look
