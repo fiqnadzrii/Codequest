@@ -1,6 +1,6 @@
 ﻿# Codequest
 
-So this is Codequest - my prototype action game where you run around a castle with a sword that can activate fire and ice stuff. It's basically the final non-VR version before I integrate with VR.
+So this is Codequest - a prototype action VR-based educational game designed to teach core programming concepts through immersive, gamified learning. Basically first person melee + pokemon integrated elemental logic + drag and drop programming.
 
 ## What This Actually Is
 
