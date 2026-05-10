@@ -9,6 +9,7 @@ Codequest is an action-adventure game where you explore castle areas, fight enem
 This is my prototype version - basically the last non-VR build before I move everything to virtual reality. Can email me at fiqnadzri@gmail.com if you have a pico 4 device and interested in playing the game in VR. I can share the apk file(guarantee not virus)
 
 Run this link to play on web:
+https://play.unity.com/en/games/3a1ad53c-839b-40ab-915b-9804992a5808/codequest-protoype-v137
 
 ## What You're Supposed to Do
 
