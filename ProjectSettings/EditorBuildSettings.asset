@@ -5,17 +5,20 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Prototype.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Castle.unity
     guid: b94ee59f12f411f488e6df197429e012
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Castle_Outskirts.unity
     guid: 9469e7422634d8142949a6e4ac0125df
+  - enabled: 1
+    path: Assets/Scenes/New Castle.unity
+    guid: 0f48f8040c0af21489782cd595f4f210
   m_configObjects:
-    Unity.XR.PXR.Settings: {fileID: 11400000, guid: f898bf36fe77c164cbabc58cffadfb7a, type: 2}
+    Unity.XR.PXR.Settings: {fileID: 0}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 8302b92974927f44bad547acad753809, type: 2}
   m_UseUCBPForAssetBundles: 0
