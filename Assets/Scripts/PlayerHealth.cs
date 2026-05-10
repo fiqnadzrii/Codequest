@@ -92,6 +92,11 @@ public class PlayerHealth : MonoBehaviour
         currentAlpha = 0f;
     }
 
+    public bool IsDead()
+    {
+        return currentHealth <= 0;
+    }
+
     private void Die()
     {
         Debug.Log("Player Died.");

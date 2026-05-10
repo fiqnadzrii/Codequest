@@ -4,45 +4,69 @@ using TMPro;
 
 public class EditUpgradeSlots : MonoBehaviour, IDropHandler
 {
-    public GameObject scrollView1; // Assign ScrollView1 in Inspector
-    public GameObject scrollView2; // Assign ScrollView2 in Inspector
-    private GameObject currentItem;  // Currently in slot
+    // The Scroll Views (Slots/Areas) that change based on the book
+    public GameObject scrollView1; 
+    public GameObject scrollView2; 
+    public GameObject scrollView3; 
+    
+    [Header("Code Option Containers")]
+    [Tooltip("Visible for Book 1, 2, and 3.")]
+    public GameObject optionsVariable1;
+    [Tooltip("Visible only for Book 3.")]
+    public GameObject optionsVariable2;
+
+    private GameObject currentItem;  // Currently in slot
 
     public void OnDrop(PointerEventData eventData)
     {
-
         if (eventData.pointerDrag != null)
         {
             currentItem = eventData.pointerDrag;
-
             currentItem.transform.SetParent(transform);
 
             RectTransform droppedRect = currentItem.GetComponent<RectTransform>();
             droppedRect.anchoredPosition = Vector2.zero;
             droppedRect.localScale = Vector3.one;
 
-            if (currentItem.name == "Book1")
-            {
-                if (scrollView1 != null)
-                {
-                    scrollView1.SetActive(true);
-                }
-                if (scrollView2 != null)
-                {
-                    scrollView2.SetActive(false);
-                }
-            }
-            else if (currentItem.name == "Book2")
-            {
-                if (scrollView1 != null)
-                {
-                    scrollView1.SetActive(false);
-                }
-                if (scrollView2 != null)
-                {
-                    scrollView2.SetActive(true);
-                }
-            }
+            // Trigger visibility update based on the dropped book's name
+            UpdateUIVisibility(currentItem.name);
+        }
+    }
+
+    // Centralized method to manage all UI visibility
+    private void UpdateUIVisibility(string bookName)
+    {
+        // 1. Determine Scroll View (Slot Area) Visibility
+        if (scrollView1 != null) scrollView1.SetActive(bookName == "Book1");
+        if (scrollView2 != null) scrollView2.SetActive(bookName == "Book2");
+        if (scrollView3 != null) scrollView3.SetActive(bookName == "Book3");
+
+        // 2. Determine Code Options Visibility (OPTIONSVARIABLE1 & OPTIONSVARIABLE2)
+        
+        // OPTIONSVARIABLE1 Rules: Visible for Book1, Book2, and Book3
+        bool showV1 = (bookName == "Book1" || bookName == "Book2" || bookName == "Book3");
+        
+        // OPTIONSVARIABLE2 Rules: Visible only for Book3
+        bool showV2 = (bookName == "Book3");
+
+        if (optionsVariable1 != null)
+        {
+            optionsVariable1.SetActive(showV1);
+            Debug.Log($"[UpgradeSlot] OptionsVariable1 set to: {showV1} (Book: {bookName})");
+        }
+        else
+        {
+             Debug.LogError("[UpgradeSlot] ERROR: optionsVariable1 reference is NULL.");
+        }
+
+        if (optionsVariable2 != null)
+        {
+            optionsVariable2.SetActive(showV2);
+            Debug.Log($"[UpgradeSlot] OptionsVariable2 set to: {showV2} (Book: {bookName})");
+        }
+        else
+        {
+             Debug.LogError("[UpgradeSlot] ERROR: optionsVariable2 reference is NULL.");
         }
     }
 
@@ -53,15 +77,8 @@ public class EditUpgradeSlots : MonoBehaviour, IDropHandler
         {
             currentItem = null;
 
-            // Hide both scroll views when no book is present
-            if (scrollView1 != null)
-            {
-                scrollView1.SetActive(false);
-            }
-            if (scrollView2 != null)
-            {
-                scrollView2.SetActive(false);
-            }
+            // Hide ALL relevant UI when the book is unequipped
+            UpdateUIVisibility("");
         }
     }
 }

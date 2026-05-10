@@ -29,7 +29,11 @@ public class InventoryHandler : MonoBehaviour
 
         IsOpen = !inventoryCanvas.activeSelf;
         inventoryCanvas.SetActive(IsOpen);
-        
+
+        // Pause / Resume Game
+        Time.timeScale = IsOpen ? 0f : 1f;
+
+        // Control player and cursor
         if (fpsController != null)
         {
             fpsController.canMove = !IsOpen;

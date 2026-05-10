@@ -1,10 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
+using UnityEngine.UI; 
 
 public class EnemyAI : MonoBehaviour
 {
-
     [Header("Got Hit Screen")]
     public GameObject m_GotHitScreen;
 
@@ -12,10 +11,17 @@ public class EnemyAI : MonoBehaviour
     public Transform player;
     public Animator animator;
     public PlayerHealth playerHealth;
-
     public EnemyAttackCollider attackCollider;
 
+    // --- AUDIO SETTINGS ---
+    [Header("Audio Settings")]
+    public AudioSource enemyAudioSource; // Drag the AudioSource component here
+    public AudioClip screamSound;
+    public AudioClip attackSound;
+    // ----------------------
+
     [Header("Settings")]
+    public bool isStationary = false;
     public float detectionRadius = 10f;
     public float attackRange = 2f;
     public float patrolRadius = 5f;
@@ -45,54 +51,57 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        
+        // Auto-get AudioSource if not manually assigned in Inspector
+        if (enemyAudioSource == null) enemyAudioSource = GetComponent<AudioSource>();
+
         if (animator == null) animator = GetComponent<Animator>();
         if (playerHealth == null && player != null) playerHealth = player.GetComponent<PlayerHealth>();
 
         agent.stoppingDistance = 0f;
         agent.autoBraking = true;
-        agent.updateRotation = false; // we control rotation manually
+        agent.updateRotation = false;
 
-        SetNewPatrolPoint();
+        if (!isStationary)
+        {
+            SetNewPatrolPoint();
+        }
+        else
+        {
+            isIdle = true;
+        }
+
         currentState = State.Patrol;
         lastState = currentState;
     }
 
     void Update()
-    
     {
         if (!agent.enabled || player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
         cooldownTimer -= Time.deltaTime;
 
         // --- Handle scream ---
         if (isScreaming)
         {
             screamTimer -= Time.deltaTime;
-
             if (isRotatingToPlayer) RotateTowards(player.position);
-
             if (screamTimer <= 0f) EndScream();
-
             UpdateAnimations(distanceToPlayer);
-            return; // Skip other updates while screaming
+            return;
         }
 
         // --- Handle attack ---
         if (isAttacking)
         {
             attackTimer -= Time.deltaTime;
-
-            // Enemy should stay in place while attacking
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
             RotateTowards(player.position);
-
             if (attackTimer <= 0f) EndAttack();
-
             UpdateAnimations(distanceToPlayer);
-            return; // Skip movement while attacking
+            return;
         }
 
         // --- State logic ---
@@ -102,20 +111,18 @@ public class EnemyAI : MonoBehaviour
         }
         else if (distanceToPlayer <= detectionRadius)
         {
-            // Player is within detection, but only chase if outside attack range
             if (distanceToPlayer > attackRange)
             {
                 if (currentState != State.Chase)
                 {
                     StartScream();
-                    return; // wait for scream before moving
+                    return;
                 }
                 currentState = State.Chase;
                 ChasePlayer();
             }
             else
             {
-                // Player is within attack range, stay idle but face player
                 currentState = State.Chase;
                 agent.isStopped = true;
                 agent.velocity = Vector3.zero;
@@ -124,26 +131,30 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Player is out of detection range → patrol
             currentState = State.Patrol;
             Patrol();
         }
 
         UpdateAnimations(distanceToPlayer);
 
-        // --- Debug state changes ---
         if (currentState != lastState)
         {
             lastState = currentState;
         }
-
-         
     }
-
 
     // ------------------------- PATROL -------------------------
     void Patrol()
     {
+        if (isStationary)
+        {
+            isIdle = true;
+            isPatrolling = false;
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            return;
+        }
+
         if (isIdle)
         {
             idleTimer += Time.deltaTime;
@@ -167,6 +178,9 @@ public class EnemyAI : MonoBehaviour
         {
             agent.isStopped = false;
             agent.SetDestination(patrolPoint);
+            Vector3 moveDirection = agent.desiredVelocity;
+            if (moveDirection.sqrMagnitude > 0.01f)
+                RotateTowards(transform.position + moveDirection);
         }
     }
 
@@ -195,30 +209,30 @@ public class EnemyAI : MonoBehaviour
 
     // ------------------------- ATTACK -------------------------
     void StartAttack()
-{
-    isAttacking = true;
-    cooldownTimer = attackCooldown;
-    attackTimer = attackDuration;
+    {
+        isAttacking = true;
+        cooldownTimer = attackCooldown;
+        attackTimer = attackDuration;
 
-    agent.isStopped = true;
-    agent.ResetPath();
-    RotateTowards(player.position);
+        agent.isStopped = true;
+        agent.ResetPath();
+        RotateTowards(player.position);
 
-    animator.ResetTrigger("Attack");
-    animator.SetTrigger("Attack");
+        animator.ResetTrigger("Attack");
+        animator.SetTrigger("Attack");
 
-    if (attackCollider != null)
-        attackCollider.EnableHitbox(); // 🔹 Enable when attack starts
-}
+        if (attackCollider != null) attackCollider.EnableHitbox();
 
-void EndAttack()
-{
-    isAttacking = false;
-    agent.isStopped = false;
+        // --- PLAY SOUND ---
+        PlaySound(attackSound);
+    }
 
-    if (attackCollider != null)
-        attackCollider.DisableHitbox(); // 🔹 Disable when attack ends
-}
+    void EndAttack()
+    {
+        isAttacking = false;
+        agent.isStopped = false;
+        if (attackCollider != null) attackCollider.DisableHitbox();
+    }
 
     // ------------------------- SCREAM -------------------------
     void StartScream()
@@ -232,6 +246,9 @@ void EndAttack()
         agent.velocity = Vector3.zero;
 
         animator.SetTrigger("Scream");
+
+        // --- PLAY SOUND ---
+        PlaySound(screamSound);
     }
 
     void EndScream()
@@ -246,12 +263,13 @@ void EndAttack()
     void RotateTowards(Vector3 target)
     {
         Vector3 lookPos = new Vector3(target.x, transform.position.y, target.z);
+        if (lookPos - transform.position == Vector3.zero) return;
+
         Quaternion targetRotation = Quaternion.LookRotation(lookPos - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
 
         if (Quaternion.Angle(transform.rotation, targetRotation) < 1f)
             isRotatingToPlayer = false;
-            
     }
 
     // ------------------------- ANIMATIONS -------------------------
@@ -263,7 +281,7 @@ void EndAttack()
         switch (currentState)
         {
             case State.Patrol:
-                walking = isPatrolling && !isIdle;
+                walking = !isStationary && isPatrolling && !isIdle;
                 break;
             case State.Chase:
                 walking = !nearPlayer && !isAttacking;
@@ -276,5 +294,14 @@ void EndAttack()
         animator.SetBool("isWalking", walking);
     }
 
-    
+    // --- HELPER FUNCTION FOR SOUND ---
+    void PlaySound(AudioClip clip)
+    {
+        if (clip != null && enemyAudioSource != null)
+        {
+            // Randomize pitch slightly (0.9 to 1.1) so repeated attacks don't sound identical
+            enemyAudioSource.pitch = Random.Range(0.9f, 1.1f);
+            enemyAudioSource.PlayOneShot(clip);
+        }
+    }
 }

@@ -30,7 +30,7 @@ public class CrosshairTargetDetector : MonoBehaviour
             string layerName = LayerMask.LayerToName(layer);
 
             // Only log and process if it's an enemy
-            if (tag == "Warrior" || tag == "Armored Warrior" || tag == "Fire Skeleton" || tag == "Ice Skeleton")
+            if (tag == "Normal Skeleton" || tag == "Fire Skeleton" || tag == "Ice Skeleton")
             {
                 if (hitObject != lastDetectedEnemy)
                 {
